@@ -2,21 +2,23 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider     = "mysql"
+  provider     = "mongodb"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
+
 
 generator client {
   provider = "prisma-client-js"
 }
 
 model Profile {
-  id String @id @default(uuid())
+  id String @id @default(uuid()) @map("_id")
   userId String @unique
   name String
-  imageUrl String @db.Text
-  email String @db.Text
+  imageUrl String
+
+  email String
 
   servers Server[]
   members Member[]
@@ -27,9 +29,10 @@ model Profile {
 }
 
 model Server {
-  id String @id @default(uuid())
+  id String @id @default(uuid()) @map("_id")
   name String
-  imageUrl String @db.Text
+  imageUrl String
+
   inviteCode String @unique
 
   profileId String
@@ -51,7 +54,7 @@ enum MemberRole {
 }
 
 model Member {
-  id String @id @default(uuid())
+  id String @id @default(uuid()) @map("_id")
   role MemberRole @default(GUEST)
 
   profileId String
@@ -80,7 +83,7 @@ enum ChannelType {
 }
 
 model Channel {
-  id String @id @default(uuid())
+  id String @id @default(uuid()) @map("_id")
   name String
   type ChannelType @default(TEXT)
 
@@ -100,10 +103,10 @@ model Channel {
 }
 
 model Message {
-  id String @id @default(uuid())
-  content String @db.Text
+  id String @id @default(uuid()) @map("_id")
+  content String
 
-  fileUrl String? @db.Text
+  fileUrl String?
 
   memberId String
   member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
@@ -121,7 +124,7 @@ model Message {
 }
 
 model Conversation {
-  id String @id @default(uuid())
+  id String @id @default(uuid()) @map("_id")
 
   memberOneId String
   memberOne Member @relation("MemberOne", fields: [memberOneId], references: [id], onDelete: Cascade)
@@ -137,9 +140,10 @@ model Conversation {
 }
 
 model DirectMessage {
-  id String @id @default(uuid())
-  content String @db.Text
-  fileUrl String? @db.Text
+  id String @id @default(uuid()) @map("_id")
+  content String
+
+  
 
   memberId String
   member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
